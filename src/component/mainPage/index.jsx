@@ -3,8 +3,11 @@
 import Table from "@/component/table";
 import { useState, useEffect, useRef } from "react";
 
+import DropDown from "../dropDown";
+import { allAssets } from "@/constant/assets";
 export default function MainPage() {
   const [data, setData] = useState([]);
+  const [socketOpen, setSocketOpen] = useState(false);
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -14,19 +17,9 @@ export default function MainPage() {
 
     socketRef.current.onopen = () => {
       console.log("websocket opened");
-      socketRef.current.send(
-        JSON.stringify({
-          type: "market_liquidity",
-          data: {
-            coin: "BTC",
-          },
-        })
-      );
-
-    
+      setSocketOpen(true);
     };
     socketRef.current.onmessage = (event) => {
-      console.log({ event });
       const parsedData = JSON.parse(event.data);
       setData((prev) => [parsedData, ...prev]);
     };
@@ -36,14 +29,30 @@ export default function MainPage() {
       console.log("runing cleanup");
       if (socketRef.current) {
         socketRef.current.close();
+        setSocketOpen(false);
       }
     };
   }, []);
+
+  const dropDownHandler = (value) => {
+    setData([])
+    if (socketOpen && socketRef.current) {
+      socketRef.current.send(
+        JSON.stringify({
+          type: "custom_market_liquidity",
+          data: {
+            coin: value,
+          },
+        })
+      );
+    }
+  };
 
   const columns = [
     {
       name: "High",
       selector: (row) => row.high,
+      sortable: true,
     },
     {
       name: "Low",
@@ -54,8 +63,12 @@ export default function MainPage() {
       selector: (row) => row.spread,
     },
     {
-      name: "Site",
-      selector: (row) => row.dataOf,
+      name: "highOnSite",
+      selector: (row) => row.highOnSite,
+    },
+    {
+      name: "lowOnSite",
+      selector: (row) => row.lowOnSite,
     },
   ];
 
@@ -65,7 +78,8 @@ export default function MainPage() {
 
   return (
     <div>
-      <Table columns={columns} data={data} />
+      <DropDown options={allAssets} onSelect={dropDownHandler} />
+      <Table columns={columns} data={data} pagination />
     </div>
   );
 }
