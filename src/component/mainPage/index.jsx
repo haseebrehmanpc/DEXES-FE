@@ -2,16 +2,16 @@
 
 import Table from "@/component/table";
 import { useState, useEffect, useRef } from "react";
-
 import DropDown from "../dropDown";
 import { allAssets } from "@/constant/assets";
+
 export default function MainPage() {
   const [data, setData] = useState([]);
   const [socketOpen, setSocketOpen] = useState(false);
   const socketRef = useRef(null);
 
   useEffect(() => {
-    const socketUrl = "ws://localhost:3003/";
+    const socketUrl = "ws://dexes-server.onrender.com/";
 
     socketRef.current = new WebSocket(socketUrl);
 
@@ -26,8 +26,8 @@ export default function MainPage() {
 
     // Cleanup the socket when the component unmounts
     return () => {
-      console.log("runing cleanup");
-      if (socketRef.current) {
+      console.log("runing cleanup", socketRef?.current?.readyState === 1);
+      if (socketRef?.current) {
         socketRef.current.close();
         setSocketOpen(false);
       }
@@ -35,7 +35,7 @@ export default function MainPage() {
   }, []);
 
   const dropDownHandler = (value) => {
-    setData([])
+    setData([]);
     if (socketOpen && socketRef.current) {
       socketRef.current.send(
         JSON.stringify({
@@ -52,7 +52,6 @@ export default function MainPage() {
     {
       name: "High",
       selector: (row) => row.high,
-      sortable: true,
     },
     {
       name: "Low",
@@ -71,10 +70,6 @@ export default function MainPage() {
       selector: (row) => row.lowOnSite,
     },
   ];
-
-  useEffect(() => {
-    console.log({ data });
-  }, [data]);
 
   return (
     <div>
