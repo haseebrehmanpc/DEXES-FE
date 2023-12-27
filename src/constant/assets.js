@@ -186,7 +186,7 @@ const commonOnThree = [
   "DOGE",
   "DYDX",
   "ETH",
-  "FRIEND",
+  // "FRIEND", // value difference 
   "HPOS",
   "ILV",
   "INJ",
@@ -212,7 +212,7 @@ const commonOnThree = [
   "WLD",
   "XRP",
   "JTO",
-  "RLB",
+  // "RLB", hyper not responding
   "SUI",
 ];
 module.exports = {
