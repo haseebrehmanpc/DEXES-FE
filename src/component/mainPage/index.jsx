@@ -7,6 +7,7 @@ import { allAssets } from "@/constant/assets";
 
 export default function MainPage() {
   const [data, setData] = useState([]);
+  const [coin , setCoin] = useState('');
   const [socketOpen, setSocketOpen] = useState(false);
   const socketRef = useRef(null);
 
@@ -36,6 +37,7 @@ export default function MainPage() {
   }, []);
 
   const dropDownHandler = (value) => {
+    setCoin(value)
     setData([]);
     if (socketOpen && socketRef.current) {
       socketRef.current.send(
@@ -50,6 +52,10 @@ export default function MainPage() {
   };
 
   const columns = [
+    {
+      name: "Asset ",
+      selector: (row) => coin,
+    },
     {
       name: "Highest Bid",
       selector: (row) => row.high + `(${row.highOnSite})`,
