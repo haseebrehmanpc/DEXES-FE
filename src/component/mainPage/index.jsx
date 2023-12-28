@@ -21,7 +21,8 @@ export default function MainPage() {
     };
     socketRef.current.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      setData((prev) => [parsedData, ...prev]);
+      setData((prev) => [parsedData]);
+      // setData((prev) => [parsedData, ...prev]);
     };
 
     // Cleanup the socket when the component unmounts
@@ -50,25 +51,18 @@ export default function MainPage() {
 
   const columns = [
     {
-      name: "High",
-      selector: (row) => row.high,
+      name: "Highest Bid",
+      selector: (row) => row.high + `(${row.highOnSite})`,
     },
     {
-      name: "Low",
-      selector: (row) => row.low,
+      name: "Lowest Ask",
+      selector: (row) => row.low  + `(${row.lowOnSite})`,
     },
     {
       name: "Spread %",
       selector: (row) => row.spread,
     },
-    {
-      name: "highOnSite",
-      selector: (row) => row.highOnSite,
-    },
-    {
-      name: "lowOnSite",
-      selector: (row) => row.lowOnSite,
-    },
+
   ];
 
   return (
