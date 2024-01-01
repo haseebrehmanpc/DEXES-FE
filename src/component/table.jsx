@@ -4,7 +4,7 @@ function Table({ columns, data }) {
   return (
     <div>
       <p>Table</p>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} pagination />
     </div>
   );
 }

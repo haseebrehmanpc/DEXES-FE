@@ -3,11 +3,10 @@
 import Table from "@/component/table";
 import { useState, useEffect, useRef } from "react";
 import DropDown from "../dropDown";
-import { allAssets } from "@/constant/assets";
-
+// import { allAssets } from "@/constant/assets";
+const noOfAssets = [5, 10, 20];
 export default function MainPage() {
   const [data, setData] = useState([]);
-  const [coin , setCoin] = useState('');
   const [socketOpen, setSocketOpen] = useState(false);
   const socketRef = useRef(null);
 
@@ -19,10 +18,19 @@ export default function MainPage() {
     socketRef.current.onopen = () => {
       console.log("websocket opened");
       setSocketOpen(true);
+      socketRef.current.send(
+        JSON.stringify({
+          type: "custom_market_liquidity",
+          data: {
+            coin: "all",
+          },
+        })
+      );
     };
     socketRef.current.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      setData((prev) => [parsedData]);
+      
+      setData((prev) => [...parsedData]);
       // setData((prev) => [parsedData, ...prev]);
     };
 
@@ -51,10 +59,24 @@ export default function MainPage() {
     }
   };
 
+  const clickHandler = () => {
+    setData([]);
+    if (socketOpen && socketRef.current) {
+      socketRef.current.send(
+        JSON.stringify({
+          type: "custom_market_liquidity",
+          data: {
+            coin: "all",
+          },
+        })
+      );
+    }
+  };
+
   const columns = [
     {
       name: "Asset ",
-      selector: (row) => coin,
+      selector: (row) => row.symbol,
     },
     {
       name: "Highest Bid",
@@ -62,18 +84,18 @@ export default function MainPage() {
     },
     {
       name: "Lowest Ask",
-      selector: (row) => row.low  + `(${row.lowOnSite})`,
+      selector: (row) => row.low + `(${row.lowOnSite})`,
     },
     {
       name: "Spread %",
       selector: (row) => row.spread,
     },
-
   ];
 
   return (
     <div>
-      <DropDown options={allAssets} onSelect={dropDownHandler} />
+      {/* <DropDown options={noOfAssets} onSelect={dropDownHandler} /> */}
+      {/* <button onClick={clickHandler}>Get Data</button> */}
       <Table columns={columns} data={data} pagination />
     </div>
   );
