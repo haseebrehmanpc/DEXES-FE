@@ -3,6 +3,7 @@
 import Table from "@/component/table";
 import { useState, useEffect, useRef } from "react";
 import DropDown from "../dropDown";
+import XlsxDownload from "../xlsx/XlsxDownload";
 // import { allAssets } from "@/constant/assets";
 const noOfAssets = [5, 10, 20];
 export default function MainPage() {
@@ -29,7 +30,7 @@ export default function MainPage() {
     };
     socketRef.current.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      
+
       setData((prev) => [...parsedData]);
       // setData((prev) => [parsedData, ...prev]);
     };
@@ -45,7 +46,7 @@ export default function MainPage() {
   }, []);
 
   const dropDownHandler = (value) => {
-    setCoin(value)
+    setCoin(value);
     setData([]);
     if (socketOpen && socketRef.current) {
       socketRef.current.send(
@@ -94,6 +95,7 @@ export default function MainPage() {
 
   return (
     <div>
+      <XlsxDownload data={data} />
       {/* <DropDown options={noOfAssets} onSelect={dropDownHandler} /> */}
       {/* <button onClick={clickHandler}>Get Data</button> */}
       <Table columns={columns} data={data} pagination />
