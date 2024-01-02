@@ -1,17 +1,20 @@
 // import XLSX from "xlsx"
 import * as XLSX from "xlsx/xlsx.mjs";
-
+var Heading = [
+  ["Spread", "Site(high)", "Site(low)", "highest Bid", "Lowest Ask", "Asset"],
+];
 const XlsxDownload = ({ data }) => {
   const handleDownload = () => {
+    //Had to create a new workbook and then add the header
     const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet([]);
+    XLSX.utils.sheet_add_aoa(ws, Heading);
 
-    // Convert array of objects to worksheet
-    const ws = XLSX.utils.json_to_sheet(data);
+    //Starting in the second row to avoid overriding and skipping headers
+    XLSX.utils.sheet_add_json(ws, data, { origin: "A2", skipHeader: true });
 
-    // Append the worksheet to the workbook
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
-    // Generate and save the Excel file
     XLSX.writeFile(wb, "arbitaryPointsheet.xlsx");
   };
   return (
