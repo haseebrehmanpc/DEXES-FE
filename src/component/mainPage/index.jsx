@@ -12,7 +12,7 @@ export default function MainPage() {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    const socketUrl = "wss://dexes-server.onrender.com/";
+    const socketUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
     socketRef.current = new WebSocket(socketUrl);
 
